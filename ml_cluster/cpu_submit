@@ -1,0 +1,21 @@
+#!/bin/bash                                                             
+# Replace these with the parameters of the cluster you are using
+#
+#SBATCH --job-name=NAME_OF_JOB
+#SBATCH --output=results/JOB_NAME.out
+#SBATCH --mem=16G
+#SBATCH --partition=serial
+#SBATCH --exclude=cpu[007-016]
+# ^^ exclude all cpus that don't support AVX instructions
+# Delete this if you are on another system
+
+source ~/.bashrc
+source activate cpu
+
+# Process file arguments
+python_file=$1
+conf_dir=$2
+shift
+shift
+python $python_file $conf_dir/$(printf %03d $SLURM_ARRAY_TASK_ID).json "$@"
+

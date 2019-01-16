@@ -1,0 +1,24 @@
+#!/bin/bash                          
+# Replace these with the parameters of the cluster you are using
+# Note that this script is not run directly
+#
+#SBATCH --job-name=NAME_OF_JOB
+#SBATCH --output=results/JOB_NAME.out
+#SBATCH --mem=8G
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:kepler
+
+source ~/.bashrc
+source activate gpu
+
+# This cluster had to load cuda
+module load cuda/9.0
+module load cudnn/7.3.1-cuda9.0
+
+# Process file arguments
+python_file=$1
+conf_dir=$2
+shift
+shift
+python $python_file $conf_dir/$(printf %03d $SLURM_ARRAY_TASK_ID).json "$@"
+
